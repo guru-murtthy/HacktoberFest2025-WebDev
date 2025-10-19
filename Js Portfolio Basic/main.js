@@ -1,7 +1,5 @@
-import './style.css'
-
 const app = document.querySelector('#app')
-
+console.log("akfjlas")
 app.innerHTML = `
   <header>
     <h1>Anonymous</h1>
