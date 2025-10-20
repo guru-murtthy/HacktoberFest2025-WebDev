@@ -14,7 +14,14 @@ main.addEventListener('mousemove', function(details){
     })
 })
 
+function getTopScore() {
+    var stored = localStorage.getItem('topScore');
+    return stored ? Number(stored) : 0;
+}
 
+function setTopScore(value) {
+    localStorage.setItem('topScore', String(value));
+}
 function makeBubble(){
     var clutter = "";
 
@@ -34,11 +41,48 @@ async function runTimer(){
             timer--;
             document.querySelector("#timerVl").textContent = timer;
         }
+    
         else{
-            document.querySelector("#pbtm").innerHTML = `<h1> GAME OVER ! </h1>`;
-            document.querySelector("#hitVal").textContent = '';
-            clearInterval(t);
-        }
+    clearInterval(t);
+
+    var previousTop = getTopScore();
+    var isNewHigh = score > previousTop;
+    if (isNewHigh) setTopScore(score);
+
+    var message = isNewHigh ? '🎉 New High Score!' : 'Keep trying!';
+    var topDisplay = isNewHigh ? score : previousTop;
+
+    document.querySelector("#pbtm").innerHTML = `
+        <div style="text-align:center;">
+            <h1>GAME OVER!</h1>
+            <p style="margin:8px 0;">Your score: <strong>${score}</strong></p>
+            <p style="margin:8px 0;">Top score: <strong>${topDisplay}</strong></p>
+            <p style="margin:8px 0;">${message}</p>
+            <button id="restartBtn" class="box" style="margin-top:12px; cursor:pointer;">Restart</button>
+        </div>
+    `;
+
+    document.querySelector("#hitVal").textContent = '';
+
+    // Make sure the Score block is visible again (in case it was hidden)
+    var scoreElem = document.querySelector("#scoreVal") && document.querySelector("#scoreVal").closest(".elem");
+    if (scoreElem) scoreElem.classList.remove("hidden");
+
+    // Restart button to play again
+    var restartBtn = document.querySelector("#restartBtn");
+    if (restartBtn) {
+        restartBtn.addEventListener('click', function() {
+            score = 0;
+            timer = 60;
+            document.querySelector("#scoreVal").textContent = '0';
+            document.querySelector("#timerVl").textContent = '60';
+            makeBubble();
+            newHit();
+            runTimer();
+        });
+    }
+}
+        
     }, 1000);
 }
 
@@ -94,8 +138,7 @@ tl.from(".elem, .box", {
     duration: 0.5,
     y: -50,
     opacity: 0,
-    duration: 0.5,
-    Delay: 0.5
+    delay: 0.5
 })
 
 tl.eventCallback("onComplete", function() {
