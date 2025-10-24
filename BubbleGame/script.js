@@ -30,6 +30,15 @@ var powerupTypes = {
     doubleScore: { duration: 20, name: 'Double Score' }
 };
 
+function getTopScore() {
+    var stored = localStorage.getItem('topScore');
+    return stored ? Number(stored) : 0;
+}
+
+function setTopScore(value) {
+    localStorage.setItem('topScore', String(value));
+}
+
 // Difficulty Settings
 var difficultySettings = {
     easy: { time: 60, bubbleCount: 140, powerupChance: 0.1 },
@@ -174,10 +183,56 @@ function runTimer() {
         if (timer > 0 && gameActive) {
             timer--;
             document.querySelector("#timerVl").textContent = timer;
+          
+        }
+    
+        else{
+    clearInterval(t);
+
+    var previousTop = getTopScore();
+    var isNewHigh = score > previousTop;
+    if (isNewHigh) setTopScore(score);
+
+    var message = isNewHigh ? '🎉 New High Score!' : 'Keep trying!';
+    var topDisplay = isNewHigh ? score : previousTop;
+
+    document.querySelector("#pbtm").innerHTML = `
+        <div style="text-align:center;">
+            <h1>GAME OVER!</h1>
+            <p style="margin:8px 0;">Your score: <strong>${score}</strong></p>
+            <p style="margin:8px 0;">Top score: <strong>${topDisplay}</strong></p>
+            <p style="margin:8px 0;">${message}</p>
+            <button id="restartBtn" class="box" style="margin-top:12px; cursor:pointer;">Restart</button>
+        </div>
+    `;
+
+    document.querySelector("#hitVal").textContent = '';
+
+    // Make sure the Score block is visible again (in case it was hidden)
+    var scoreElem = document.querySelector("#scoreVal") && document.querySelector("#scoreVal").closest(".elem");
+    if (scoreElem) scoreElem.classList.remove("hidden");
+
+    // Restart button to play again
+    var restartBtn = document.querySelector("#restartBtn");
+    if (restartBtn) {
+        restartBtn.addEventListener('click', function() {
+            score = 0;
+            timer = 60;
+            document.querySelector("#scoreVal").textContent = '0';
+            document.querySelector("#timerVl").textContent = '60';
+            makeBubble();
+            newHit();
+            runTimer();
+        });
+    }
+}
+        
+
         } else if (gameActive) {
             endGame();
             clearInterval(t);
         }
+
     }, 1000);
 }
 
@@ -257,6 +312,43 @@ function activatePowerup(type) {
         removePowerup(type);
     }, powerupTypes[type].duration * 1000);
 }
+
+my-first-contribution
+makeBubble();
+newHit();
+
+tl.from("#panel", {
+    duration: 1,
+    x: 200,
+    opacity: 0,
+    ease: "power2.inOut",
+})
+
+tl.from("#ptop", {
+    duration: 1,
+    x: -500,
+    opacity: 0,
+    ease: "power2.inOut",
+})
+
+tl.from(".bubble", {
+    duration: 1,
+    y: 200,
+    opacity: 0,
+    ease: "power2.inOut",
+    stagger: 0.02
+})
+
+tl.from(".elem, .box", {
+    duration: 0.5,
+    y: -50,
+    opacity: 0,
+    delay: 0.5
+})
+
+tl.eventCallback("onComplete", function() {
+    runTimer();
+});
 
 function removePowerup(type) {
     activePowerups = activePowerups.filter(p => p !== type);
