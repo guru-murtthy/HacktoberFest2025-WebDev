@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Focus Timer — Motivation Mode</title>
+  <meta name="description" content="Minimal Pomodoro-style focus timer that shows a motivational quote from ZenQuotes when a session ends." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="app-header">
+    <h1>Focus Timer</h1>
+    <p class="subtitle">Stay focused. Finish sessions. Get motivated.</p>
+    </header>
+    <section class="timer-card" aria-labelledby="timerTitle">
+    <h2 id="timerTitle" class="sr-only">Focus Timer</h2>
+    <div class="time-display" id="timeDisplay" role="timer" aria-live="polite">
+    <span id="minutes">25</span><span class="colon">:</span><span id="seconds">00</span>
+    </div>
+    <div class="controls">
+    <div class="preset-buttons">
+    <button class="preset" data-min="5">5 m</button>
+    <button class="preset" data-min="10">10 m</button>
+    <button class="preset active" data-min="25">25 m</button>
+    <button class="preset" data-min="50">50 m</button>
+    </div>
+    <div class="action-row">
+    <button id="startBtn" class="btn primary">Start</button>
+    <button id="pauseBtn" class="btn" disabled>Pause</button>
+    <button id="resetBtn" class="btn">Reset</button>
+    </div>
+    <div class="custom-row">
+    <label for="customMinutes">Custom (min):</label>
+    <input id="customMinutes" type="number" min="1" max="180" placeholder="e.g. 25" />
+    <button id="setCustom" class="btn">Set</button>
+    </div>
+    <div class="progress-wrap" aria-hidden="true">
+    <div class="progress" id="progress"></div>
+    </div>
+    </div>
+    </section>
+
+    <section class="motivation-info">
+    <p>When a session ends you get a motivational quote</p>
+    </section>
+    </main>
+    
+  <div id="motivationModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-panel" role="document">
+    <button class="modal-close" id="closeModal" aria-label="Close">✕</button>
+    <div class="motiv-content">
+    <div class="motiv-emoji" id="motivEmoji">🌟</div>
+    <blockquote id="motivQuote" class="motiv-quote">—</blockquote>
+    <div class="motiv-author" id="motivAuthor"></div>
+    </div>
+    <div class="modal-actions">
+    <button id="copyBtn" class="btn">Copy Quote</button>
+    <button id="newQuoteBtn" class="btn">New Quote</button>
+    <button id="closeBtn" class="btn primary">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
